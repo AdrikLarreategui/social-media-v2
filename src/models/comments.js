@@ -1,13 +1,15 @@
 const mongoose = require ('mongoose')
 const CommentId = mongoose.SchemaTypes.CommentId
 
-const CommentSchema = new mongoose.Schema({
+const CommentSchema = new mongoose.Schema(
+    {
     status: String,
     UserId: {
         type: CommentId,
         ref: 'User'
     },
-    deliveryDate: Date
+    deliveryDate: Date,
+    POstId: [{ type: CommentId, ref: 'Post'}]
 }, { timestamps: true })
 
 const Comment = mongoose.model('Comment', CommentSchema)

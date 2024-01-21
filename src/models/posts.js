@@ -1,15 +1,17 @@
 const mongoose = require('mongoose')
-const PostId = mongoose.Schema.Types.PostId
+//const User = require('./users')
+const CommentId = mongoose.Schema.Types.CommentId
 const PostSchema = new mongoose.Schema({
-    // commentNumber: {
-    //     type: Number,
-    //     required: true,
-    // },
     body: {
         type: String,
         required:true,
+        comments: [
+            {
+                userId: { type: CommentId, ref: 'User'},
+                comment: String,
+            },
+        ],  likes : [{ type: CommentId }]
     },
-    tokens: [],
 }, {timestamps: true})
 
 PostSchema.index({
