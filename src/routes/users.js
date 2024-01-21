@@ -1,9 +1,9 @@
-// const express = require('express')
-// const router = express.Router()
-// const userController = require('../controllers/userController.js')
+const express = require('express')
+const router = express.Router()
+const userController = require('../controllers/userController.js')
 
-// router.post('/register', userController.register)
-// router.post('login', userController.login)
-// router.delete('/logout', userController.logout)
+router.post('/register', userController.register)
+router.post('login', userController.login)
+router.delete('/logout', userController.logout)
 
-// module.exports = router
+module.exports = router
