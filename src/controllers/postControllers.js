@@ -2,22 +2,17 @@ const Post = require('../models/post.js')
 const User = require('../models/users.js')
 
 const PostController = {
-    create (req, res) {
-        const { body } = req.body
-        if (!body) {
-            return res.status(400).send('Por favor, escribe algo en el campo correspondiente')
+    
+    async create (req, res) {
+        try {
+            const post = await Post.create(req.body)
+            res.status(201).send(post)
+            
+        } catch (error) {
+            console.error(error)
+            res.starus(500).send({ message: "Ha habido un problema al crear el post"})
         }
     },
-    // async create (req, res) {
-    //     try {
-    //         const post = await Post.create(req.body)
-    //         res.status(201).send(post)
-            
-    //     } catch (error) {
-    //         console.error(error)
-    //         res.starus(500).send({ message: "Ha habido un problema al crear el post"})
-    //     }
-    // },
     async getAll(req, res) {
         try {
             const { page = 1, limit = 10 } = req.query
@@ -40,20 +35,6 @@ const PostController = {
             res.status(500).send({ message: "Ha habido un problema con la búsqueda" })
         }
     },
-
-    // async getPostByName (req, res) {
-    //     try {
-    //         if (req.params.name.length>40) {
-    //             return res.status(400).send('Búsqueda demasiado larga')
-    //         }
-    //         const name = new RegExp(req.params.name, "i")
-    //         const post = await Post.find({ name })
-    //         res.send(post)
-    //     } catch (error) {
-    //         console.error(error)
-    //         res.status(500).send({ message: "Ha habido un problema con la búsqueda"})
-    //     }
-    // }, 
 
     async getPostByName (req, res) {
         try {
@@ -86,14 +67,53 @@ const PostController = {
     async delete (req, res) {
         try{
             const post = await
-            Post.findByIdAndDelete(req.params._id)
-            res.send({ post, message: "Post eliminado"})
+            Post.findByIdAndDelete(
+                req.params._id, 
+                req.body, 
+                { new: true }
+                )
+            res.status(201).send({ post, message: "Post eliminado"})
         } catch(error) {
             console.error(error)
             res.status(500).send({ message: "Ha habido un problema al eliminar el post"})
         }
     },
-    
+    async insertComment(req, res) {
+		try {
+			const post = await Post.findByIdAndUpdate(
+				req.params._id,
+				{
+					$push: {
+						reviews: { comment: req.body.comment, userId: req.user._id },
+					},
+				},
+				{ new: true }
+			)
+			res.send(post)
+		} catch (error) {
+			console.error(error)
+			res.status(500).send({ message: 'Ha habido un problema al insertar el comentario' })
+		}
+	},
+
+	async like(req, res) {
+		try {
+			const post = await Post.findByIdAndUpdate(
+				req.params.postId,
+				{ $push: { likes: req.user._id } },
+				{ new: true }
+			)
+			await User.findByIdAndUpdate(
+				req.user._id,
+				//{ $push: { wishList: req.params.productId } },
+				{ new: true }
+			)
+			res.send(post)
+		} catch (error) {
+			console.error(error)
+			res.status(500).send({ message: 'Ha habido un problema' })
+		}
+	},
 }
 
 module.exports = PostController

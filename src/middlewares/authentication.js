@@ -1,5 +1,6 @@
 const User = require('../models/users.js')
-const Comment = require('../models/post.js')
+const Post = require('../models/posts.js')
+//const Comment = require('../models/comments.js')
 const jwt = require('jsonwebtoken')
 const { jwt_secret } = require('../config/keys.js')
 
@@ -30,7 +31,7 @@ const isAdmin = async (req, res, next) => {
 
 const isAuthor = async (req, res, next) => {
     try {
-        const post = await Comment.findById(req.params._id)
+        const post = await Post.findById(req.params._id)
         if(post.userId.toString() !== req.user._id.toString()) {
             res.status(403).send({ message: 'No puedes cambiar este comentario' })
         }
