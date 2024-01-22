@@ -12,9 +12,9 @@ app.use(express.json())
 dbConnection()
 
 app.use('/users', require('./routes/users.js'))
-// app.use('/posts', require('./routes/post.js'))
+app.use('/posts', require('./routes/posts.js'))
 // app.use('/comments', require('./routes/comment.js'))
 
 app.use(typeError)
 
-app.listen(process.env.PORT, () => console.log(`Server started at port ${process.env.PORT}`))
+app.listen(process.env.PORT, () => console.log(`Servers started at port ${process.env.PORT}`))

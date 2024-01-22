@@ -5,12 +5,12 @@ const PostSchema = new mongoose.Schema({
     body: {
         type: String,
         required:true,
-        comments: [
-            {
-                UserId: { type: ObjectId, ref: 'User'},
-                comment: String,
-            },
-        ],  likes : [{ type: ObjectId }]
+        // comments: [
+        //     {
+        //         UserId: { type: ObjectId, ref: 'User'},
+        //         comment: String,
+        //     },
+ //       ],  likes : [{ type: ObjectId }]
     },
 }, {timestamps: true})
 

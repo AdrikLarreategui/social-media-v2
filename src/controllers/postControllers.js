@@ -7,7 +7,7 @@ const PostController = {
         try {
             const post = await Post.create(req.body)
             res.status(201).send(post)
-            
+            console.log('Hola', post)
         } catch (error) {
             console.error(error)
             res.starus(500).send({ message: "Ha habido un problema al crear el post"})

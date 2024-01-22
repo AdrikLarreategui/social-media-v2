@@ -1,6 +1,6 @@
 const User = require('../models/users.js')
 const Post = require('../models/posts.js')
-//const Comment = require('../models/comments.js')
+const Comment = require('../models/comments.js')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
