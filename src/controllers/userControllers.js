@@ -1,79 +1,60 @@
 const Post = require('../models/posts.js')
 const User = require('../models/users.js')
 
-const PostController = {
+const UserController = {
     
-    async create (req, res) {
-        try {
-            const post = await Post.create(req.body)
-            res.status(201).send(post)
-            
-        } catch (error) {
-            console.error(error)
-            res.starus(500).send({ message: "Ha habido un problema al crear el post"})
-        }
-    },
-    async getAll(req, res) {
-        try {
-            const { page = 1, limit = 10 } = req.query
-            const post = await Post.find()
-            .limit(limit)
-            .skip(( page -1) * limit)
-            res.status(200).send(post)
-        } catch(error) {
-            console.error(error)
-            res.status(500).send({ message: "Ha habido un problema"})
-        }
-    },
+	async register(req, res, next) {
+		try {
+			const user = await User.create({ ...req.body, role: 'user' })
+			res.status(201).send({ message: 'Usuario registrado con exito', user })
+		} catch (error) {
+			error.origin = 'usuario'
+			next(error)
+		}
+	},
+	async login(req, res) {
+		try {
+			const user = await User.findOne({
+				email: req.body.email,
+			})
+			const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
 
-    async getById(req, res) {
-        try{
-            const post = await Post.findById(req.params._id)
-            res.status(200).send(post)
-        } catch(error) {
-            console.error(error)
-            res.status(500).send({ message: "Ha habido un problema con la búsqueda" })
-        }
-    },
+			if (user.tokens.length > 4) user.tokens.shift()
 
-    async update(req, res) {
-        try{
-            const post = await Post.findByIdAndUpdate(
-                req.params._id, 
-                req.body, 
-                {new: true }
-                )
-            res.status(201).send({ message: "Post actualizado con éxito", post})
-        } catch (error) {
-            console.error(error)
-            res.status(500).send({ message: "Ha habido un problema al actualizar el post"})
-        }
-    },
+			user.tokens.push(token)
+			await user.save()
 
-    async delete (req, res) {
-        try{
-            const post = await
-            Post.findByIdAndDelete(
-                req.params._id, 
-                req.body, 
-                { new: true }
-                )
-            res.status(201).send({ post, message: "Post eliminado"})
-        } catch(error) {
-            console.error(error)
-            res.status(500).send({ message: "Ha habido un problema al eliminar el post"})
-        }
-    },
-    
-    async getInfo(req, res) {
+			res.send({ message: 'Bienvenid@ ' + user.name, token })
+		} catch (error) {
+			console.error(error)
+		}
+	},
+
+	async logout(req, res) {
+		try {
+			await User.findByIdAndUpdate(req.user._id, {
+				$pull: { tokens: req.headers.authorization },
+			})
+			res.send({ message: 'Desconectado con éxito' })
+		} catch (error) {
+			console.error(error)
+			res.status(500).send({
+				message: 'Hubo un problema al intentar desconectar al usuario',
+			})
+		}
+	},
+
+	async getInfo(req, res) {
 		try {
 			const user = await User.findById(req.user._id)
 				.populate({
-					path: 'CommentsIds',
+					path: 'orderIds',
 					populate: {
-						path: 'PostsIds',
+						path: 'productIds',
 					},
 				})
+				.populate('wishList')
+
 			res.send(user)
 		} catch (error) {
 			console.error(error)
@@ -81,4 +62,4 @@ const PostController = {
 	},
 }
 
-module.exports = PostController
+module.exports = UserController
