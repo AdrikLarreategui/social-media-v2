@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ObjectId = mongoose.SchemaTypes.ObjectId;
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -17,7 +18,7 @@ const UserSchema = new mongoose.Schema({
         },
     tokens: [],
     role: String,
-	// PostIds: [{ type: ObjectId, ref: 'Posts' }],
+	CommentId: [{ type: ObjectId, ref: 'Posts' }],
 }, { timestamps: true })
 
 UserSchema.methods.toJSON = function () {

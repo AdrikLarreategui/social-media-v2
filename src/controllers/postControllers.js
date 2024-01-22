@@ -17,6 +17,7 @@ const PostController = {
         try {
             const { page = 1, limit = 10 } = req.query
             const post = await Post.find()
+            .populate("comments.UserId")
             .limit(limit)
             .skip(( page -1) * limit)
             res.status(200).send(post)
@@ -99,7 +100,7 @@ const PostController = {
 	async like(req, res) {
 		try {
 			const post = await Post.findByIdAndUpdate(
-				req.params.PostId,
+				req.params.PostsId,
 				{ $push: { likes: req.user._id } },
 				{ new: true }
 			)
@@ -114,6 +115,22 @@ const PostController = {
 			res.status(500).send({ message: 'Ha habido un problema' })
 		}
 	},
+
+    async getInfo(req, res) {
+        try {
+          const user = await User.findById(req.user._id)
+            .populate({
+              path: "CommentsIds",
+              populate: {
+                path: "PostsIds",
+              },
+            });
+          res.send(user);
+        } catch (error) {
+          console.error(error);
+        }
+      },
+    
 }
 
 module.exports = PostController
