@@ -10,7 +10,7 @@ const CommentController = {
                 UserId: req.user_id
             })
             await User.findByIdAndUpdate(req.user_id, {
-                $push: { commentIds: comment._id}
+                $push: { CommentIds: comment._id}
             })
             // await User.findByIdAndUpdate(req.user._id, {
 			// 	$push: { orderIds: order._id },
@@ -20,7 +20,21 @@ const CommentController = {
             console.error(error)
             res.status(500).send({ message: 'Ha habido un problema al crear el comentario'})
         }
-    }
+    },
+    async update(req, res) {
+		try {
+			const comment = await Comment.findByIdAndUpdate(
+				req.params._id,
+				{ ...req.body, UserId: req.user._id },
+				{
+					new: true,
+				}
+			)
+			res.send({ message: 'Comentario actualizado con éxito', comment })
+		} catch (error) {
+			console.error(error)
+		}
+	},
 }
 
 module.exports = CommentController

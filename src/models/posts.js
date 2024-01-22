@@ -7,7 +7,7 @@ const PostSchema = new mongoose.Schema({
         required:true,
         comments: [
             {
-                userId: { type: CommentId, ref: 'User'},
+                UserId: { type: CommentId, ref: 'User'},
                 comment: String,
             },
         ],  likes : [{ type: CommentId }]

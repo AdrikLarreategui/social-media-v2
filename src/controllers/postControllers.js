@@ -1,4 +1,4 @@
-const Post = require('../models/post.js')
+const Post = require('../models/posts.js')
 const User = require('../models/users.js')
 
 const PostController = {
@@ -84,7 +84,7 @@ const PostController = {
 				req.params._id,
 				{
 					$push: {
-						reviews: { comment: req.body.comment, userId: req.user._id },
+						reviews: { comment: req.body.comment, UserId: req.user._id },
 					},
 				},
 				{ new: true }
@@ -99,7 +99,7 @@ const PostController = {
 	async like(req, res) {
 		try {
 			const post = await Post.findByIdAndUpdate(
-				req.params.postId,
+				req.params.PostId,
 				{ $push: { likes: req.user._id } },
 				{ new: true }
 			)

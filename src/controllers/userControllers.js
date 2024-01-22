@@ -1,60 +1,84 @@
+const Post = require('../models/posts.js')
 const User = require('../models/users.js')
-const jwt = require('jsonwebtoken')
-const { jwt_secret } = require('../config/keys.js')
 
-const userController = {
-    create(req, res, next) {
-        const { name, email, password } = req.body
-        if(!name || !email || password) {
-            return res.status(400).send('Por favor, completa todos los campos')
-        }
-        const hashedPassword = req.body.password ? bcrypt.hashSync(req.body.password, 10): undefined
-        if(hashedPassword === undefined) {
-        return res.status(400).send('Contraseña requerida')
-        }
-    },
-
-    async register (req, res) {
+const PostController = {
+    
+    async create (req, res) {
         try {
-            const user = await User.create({ ...req.body, role:'user'})
-            res.status(201).send({message: 'Usuario registrado con éxito', user})
+            const post = await Post.create(req.body)
+            res.status(201).send(post)
+            
         } catch (error) {
             console.error(error)
-            res.status(500).send({message: 'Error al registar el usuario'})
+            res.starus(500).send({ message: "Ha habido un problema al crear el post"})
+        }
+    },
+    async getAll(req, res) {
+        try {
+            const { page = 1, limit = 10 } = req.query
+            const post = await Post.find()
+            .limit(limit)
+            .skip(( page -1) * limit)
+            res.status(200).send(post)
+        } catch(error) {
+            console.error(error)
+            res.status(500).send({ message: "Ha habido un problema"})
         }
     },
 
-    async login(req, res) {
+    async getById(req, res) {
+        try{
+            const post = await Post.findById(req.params._id)
+            res.status(200).send(post)
+        } catch(error) {
+            console.error(error)
+            res.status(500).send({ message: "Ha habido un problema con la búsqueda" })
+        }
+    },
+
+    async update(req, res) {
+        try{
+            const post = await Post.findByIdAndUpdate(
+                req.params._id, 
+                req.body, 
+                {new: true }
+                )
+            res.status(201).send({ message: "Post actualizado con éxito", post})
+        } catch (error) {
+            console.error(error)
+            res.status(500).send({ message: "Ha habido un problema al actualizar el post"})
+        }
+    },
+
+    async delete (req, res) {
+        try{
+            const post = await
+            Post.findByIdAndDelete(
+                req.params._id, 
+                req.body, 
+                { new: true }
+                )
+            res.status(201).send({ post, message: "Post eliminado"})
+        } catch(error) {
+            console.error(error)
+            res.status(500).send({ message: "Ha habido un problema al eliminar el post"})
+        }
+    },
+    
+    async getInfo(req, res) {
 		try {
-			const user = await User.findOne({
-				email: req.body.email,
-			})
-			const token = jwt.sign({ _id: user._id }, jwt_secret)
-
-			if (user.tokens.length > 4) user.tokens.shift()
-
-			user.tokens.push(token)
-			await user.save()
-
-			res.send({ message: 'Bienvenid@ ' + user.name, token })
+			const user = await User.findById(req.user._id)
+				.populate({
+					path: 'CommentIds',
+					populate: {
+						path: 'PostsIds',
+					},
+				})
+			res.send(user)
 		} catch (error) {
 			console.error(error)
 		}
 	},
-
-    async logout (req, res) {
-        try {
-            await User.findByIdAndUpdate(req.user._id, {
-                $pull: { tokens: req.headers.authorization },
-            })
-            res.send({ message:"Usuario desconectado con éxito" })
-        } catch (error) {
-            console.error(error)
-            res.status(500).send({ 
-                message: "Ha habido un problema con la desconexión del usuario"
-            })
-        }
-    }
 }
 
-module.exports = userController
+module.exports = PostController

@@ -20,7 +20,7 @@ module.exports = router
 // router.get('/getById/:_id', PostController.getById)
 // router.get('/name/:name', PostController.getPostByName)
 //router.put('/posts/:_id', authentication, PostController.insertPost)
-//router.put('/comments/:postId', authentication, PostController.comment)
+//router.put('/comments/:PostId', authentication, PostController.comment)
 // router.put('/reviews/:_id', authentication, productController.insertComment)
 // router.put('/like/:productId', authentication, productController.like)
 

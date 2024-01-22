@@ -32,7 +32,7 @@ const isAdmin = async (req, res, next) => {
 const isAuthor = async (req, res, next) => {
     try {
         const post = await Post.findById(req.params._id)
-        if(post.userId.toString() !== req.user._id.toString()) {
+        if(post.UserId.toString() !== req.user._id.toString()) {
             res.status(403).send({ message: 'No puedes cambiar este comentario' })
         }
         next()
