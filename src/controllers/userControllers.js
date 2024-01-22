@@ -1,5 +1,7 @@
 const Post = require('../models/posts.js')
 const User = require('../models/users.js')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 const UserController = {
     
@@ -31,6 +33,8 @@ const UserController = {
 	},
 
 	async logout(req, res) {
+		console.log(req)
+		console.log('patata', req.headers.authorization)
 		try {
 			await User.findByIdAndUpdate(req.user._id, {
 				$pull: { tokens: req.headers.authorization },
@@ -47,13 +51,13 @@ const UserController = {
 	async getInfo(req, res) {
 		try {
 			const user = await User.findById(req.user._id)
-				.populate({
-					path: 'orderIds',
-					populate: {
-						path: 'productIds',
-					},
-				})
-				.populate('wishList')
+				// .populate({
+				// // path: 'orderIds',
+				// // populate: {
+				// // 	// path: 'postIds',
+				// // 	},
+				// // })
+				// // .populate('wishList')
 
 			res.send(user)
 		} catch (error) {

@@ -13,7 +13,7 @@ router.get('/name/:name', PostController.getPostByName)
 
 module.exports = router
 
-//router.post('/', authentication, isAdmin, PostController.create)
+router.post('/', authentication, isAdmin, PostController.create)
 //router.put('/:_id', authentication, PostController.update)
 //router.delete('/:_id', authentication, PostController.delete)
 // router.get('/getAll.', PostController.getAll)

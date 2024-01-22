@@ -12,13 +12,14 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         required: [true, 'Por favor rellena tu correo'],
         },
-    passwword: {
+    password: {
         type: String,
         required:[true, 'Por favor rellena tu contraseña'],
         },
     tokens: [],
     role: String,
 	CommentId: [{ type: ObjectId, ref: 'Posts' }],
+    // orderIds: [{ type: ObjectId, ref: 'Order' }],
 }, { timestamps: true })
 
 UserSchema.methods.toJSON = function () {
