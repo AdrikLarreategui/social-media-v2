@@ -19,7 +19,6 @@ const UserSchema = new mongoose.Schema({
     tokens: [],
     role: String,
 	CommentId: [{ type: ObjectId, ref: 'Posts' }],
-    // orderIds: [{ type: ObjectId, ref: 'Order' }],
 }, { timestamps: true })
 
 UserSchema.methods.toJSON = function () {

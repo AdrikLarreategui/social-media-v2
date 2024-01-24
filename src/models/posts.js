@@ -4,13 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const PostSchema = new mongoose.Schema({
     body: {
         type: String,
-        required:true,
-        // comments: [
-        //     {
-        //         UserId: { type: ObjectId, ref: 'User'},
-        //         comment: String,
-        //     },
- //       ],  likes : [{ type: ObjectId }]
+        required:true
     },
 }, {timestamps: true})
 

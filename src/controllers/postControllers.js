@@ -106,7 +106,6 @@ const PostController = {
 			)
 			await User.findByIdAndUpdate(
 				req.user._id,
-				//{ $push: { wishList: req.params.productId } },
 				{ new: true }
 			)
 			res.send(post)
